@@ -62,7 +62,7 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
   //TH1D* effPerChip = new TH1D("EffPerChip", "x: ChipID y: Eff", 9, 0, 9);
   TH1D* entriesPerChip = new TH1D("EntriesPerChip", "x: ChipID y: Entries", 9, 0, 9);
   TH1D* hitsPerChip = new TH1D("HitsPerChip", "x: ChipID y: #Hits", 9, 0, 9);
-
+  
   for (auto& hist : {entriesPerChip, hitsPerChip}) {
     hist -> Sumw2();
     hList -> Add(hist);
@@ -76,7 +76,7 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
 
   for (int ihit=0; ihit<inTree_hit -> GetEntries(); ihit++) {
     inTree_hit -> GetEntry(ihit);
-
+  
     hitmaps[matched.chipID] -> Fill(matched.location_col, matched.location_row);
     tots[matched.chipID]    -> Fill((matched.tot_us_col + matched.tot_us_row)/2.);
     hitsPerChip             -> Fill(matched.chipID);
@@ -104,24 +104,19 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
   effPerChip -> SetTitle("x: ChipID, y: Eff");
   effPerChip -> Scale(2.0); // Since 1 hit outputs 2 raw info(col/row)
   effPerChip -> Divide(entriesPerChip);
-  hList -> Add(effPerChip);
+  hList -> Add(effPerChip); 
 
   // Draw Plots
   // ==========================
-  // Modified: arrange nine chip pads and one information pad in a 2x5 grid.
-  const int nCols = 5;              // Modified: use five columns instead of one horizontal row.
-  const int nRows = 2;              // Modified: use two rows.
-  const int nPads = nCols*nRows;    // Modified: total number of chip/information pads.
+  const int nChips = 10;
   const int padWidth = 350;
   const double leftMargin = 0.14;
   const double rightMargin = 0.22;
   const double topMargin = 0.05;
   const double bottomMargin = 0.16;
 
-  // Modified: calculate the height of one pad, then scale the canvas to the 2x5 layout.
-  const int padHeight = static_cast<int>(padWidth*(1.0-leftMargin-rightMargin)/(1.0-topMargin-bottomMargin));
-  const int canvasWidth = nCols*padWidth;     // Modified: canvas width for five columns.
-  const int canvasHeight = nRows*padHeight;   // Modified: canvas height for two rows.
+  const int canvasWidth = nChips*padWidth;
+  const int canvasHeight = static_cast<int>(padWidth*(1.0-leftMargin-rightMargin)/(1.0-topMargin-bottomMargin));
 
   TCanvas* c0 = new TCanvas("c0", "c0", canvasWidth, canvasHeight);
   TCanvas* c1 = new TCanvas("c1", "c1", canvasWidth, canvasHeight);
@@ -129,23 +124,14 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
   TCanvas* c3 = new TCanvas("c3", "c3", 1.2*1000, 1000);
 
   // Draw Hitmap & ToT distribution of each chip
-  // Modified: create pads according to the total number of cells in the 2x5 grid.
-  for (int ipad=0; ipad<nPads; ipad++) {
+  for (int ipad=0; ipad<10; ipad++) {
 
-    // Modified: convert the one-dimensional pad index into 2D row and column indices.
-    const int irow = ipad/nCols;
-    const int icol = ipad%nCols;
+    double xMin = static_cast<double>(ipad)/nChips;
+    double xMax = static_cast<double>(ipad+1)/nChips;
 
-    // Modified: calculate the normalized pad boundaries for the 2x5 layout.
-    const double xMin = static_cast<double>(icol)/nCols;
-    const double xMax = static_cast<double>(icol+1)/nCols;
-    const double yMax = 1.0 - static_cast<double>(irow)/nRows;
-    const double yMin = 1.0 - static_cast<double>(irow+1)/nRows;
-
-    // Modified: place both hitmap and ToT pads at the calculated 2D position.
-    TPad* p0 = new TPad(Form("p%d_c0", ipad), Form("p%d_c0", ipad), xMin, yMin, xMax, yMax);
-    TPad* p1 = new TPad(Form("p%d_c1", ipad), Form("p%d_c1", ipad), xMin, yMin, xMax, yMax);
-
+    TPad* p0 = new TPad(Form("p%d_c0", ipad), Form("p%d_c0", ipad), xMin, 0.0, xMax, 1.0);
+    TPad* p1 = new TPad(Form("p%d_c1", ipad), Form("p%d_c1", ipad), xMin, 0.0, xMax, 1.0);
+  
     p0 -> SetTopMargin(topMargin);
     p0 -> SetBottomMargin(bottomMargin);
     p0 -> SetLeftMargin(leftMargin);
@@ -157,8 +143,7 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
     p1 -> SetRightMargin(rightMargin);
 
     // Write general information of the run
-    // Modified: reserve the last cell of the 2x5 grid for run information.
-    if (ipad == nPads-1) {
+    if (ipad == 9) {
 
       std::vector<std::string> infos {
         Form("Used file:"),
@@ -203,7 +188,7 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
       htmp0 -> GetYaxis() -> SetLabelFont(43);
       htmp0 -> GetYaxis() -> SetLabelSize(10);
       htmp0 -> GetYaxis() -> SetTitle("Row ID");
-
+  
       htmp0 -> Draw("same");
       hitmaps[ipad] -> Draw("same COLZ");
 
@@ -234,7 +219,7 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
       htmp1 -> GetYaxis() -> SetLabelFont(43);
       htmp1 -> GetYaxis() -> SetLabelSize(10);
       htmp1 -> GetYaxis() -> SetTitle("#Entries");
-
+ 
       tots[ipad] -> SetFillColor(kBlue);
       tots[ipad] -> Draw("same");
 
@@ -434,7 +419,7 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
   if (saveRoot) {
     std::string saveFileName = Form("%s/RunQA_%s.root", pathOfInfile.c_str(), stemOfInfile.c_str());
     TFile* ofile = new TFile(saveFileName.c_str(), "recreate");
-
+    
     std::cout << "QA histograms will be saved in the following .root file as requested: " << ofile -> GetName() << std::endl;
 
     ofile -> cd();
@@ -442,5 +427,5 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
     ofile -> Close();
     delete ofile;
   }
-
+  
 }

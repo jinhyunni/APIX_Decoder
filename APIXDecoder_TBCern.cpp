@@ -40,7 +40,8 @@ void APIXDecoder_TBCern(const std::string& binfile,
   // The acquisition program passed 4096-byte readouts separately to
   // decode_cern.py.  Resetting the packet scan at each boundary is required
   // to reproduce its CSV exactly.
-  constexpr std::size_t kReadoutSize = 4096;
+  constexpr std::size_t kReadoutSize = 4096; // -> Buffer limit before update. See fw/astep24-3l/target-multiboard/flow.tcl
+  //constexpr std::size_t kReadoutSize = 16384;
   std::array<uint8_t, kReadoutSize> readoutBuffer{};
   int32_t readoutIndex = 0;
 
