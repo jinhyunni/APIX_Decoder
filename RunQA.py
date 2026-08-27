@@ -22,7 +22,7 @@ filename = args.filename
 data_taken_time = args.data_taken_time
 
 server = "npl17inch"
-remote_dir = "/home/npl/AstroPix_9chip_2026TB_CERN/TB/pretest"
+remote_dir = "/home/npl/AstroPix_9chip_2026TB_CERN/TB"
 local_dir = Path("../data/TB@CERN")
 local_dir.mkdir(parents=True, exist_ok=True)
 
@@ -42,6 +42,7 @@ else:
     run_qa_command = f'Draw_RunQA.cpp("{local_root_file}")'
 
 # 1. Download
+'''
 subprocess.run(
     ["scp", remote_file, str(local_bin_file)],
     check=True,
@@ -55,7 +56,7 @@ subprocess.run(
     ],
     check=True,
 )
-
+'''
 # 3. Run QA
 subprocess.run(
     [

@@ -122,7 +122,7 @@ inline void MatchHits(TTree* iTree, TTree* oTree, APIXMatched& matchedData, cons
       if (hitsCol.location < 3) continue; // Reject hits from Col0-2
       if (hitsCol.layer == 0 || hitsCol.layer > 4) continue;
       if (hitsCol.chipID > 8) continue;
-      if (hitsCol.tot_us == 0) continue; // -> Test: Turn off tot_us rejection
+      //if (hitsCol.tot_us == 0) continue; // -> Test: Turn off tot_us rejection
 
       for (int iRow=0; iRow<treeCurrentReadout_row->GetEntries(); iRow++) {
         treeCurrentReadout_row -> GetEntry(iRow);
@@ -130,7 +130,7 @@ inline void MatchHits(TTree* iTree, TTree* oTree, APIXMatched& matchedData, cons
         if (hitsRow.location > 34) continue;
         if (hitsRow.layer == 0 || hitsRow.layer > 4) continue;
         if (hitsRow.chipID > 8) continue;
-        if (hitsRow.tot_us == 0) continue; // -> Test: Turn off tot_us rejection
+        //if (hitsRow.tot_us == 0) continue; // -> Test: Turn off tot_us rejection
 
         // Reject hits & column in differnet layers
         if (hitsCol.layer != hitsRow.layer) continue;
@@ -143,7 +143,8 @@ inline void MatchHits(TTree* iTree, TTree* oTree, APIXMatched& matchedData, cons
         double abs_diff_tot_us = std::abs(hitsCol.tot_us - hitsRow.tot_us);
         double rel_diff_tot_us = abs_diff_tot_us / hitsCol.tot_us * 100;
 
-        if ((abs_diff_timestamp >= args.absDiffTimestamp) || (rel_diff_tot_us >= args.relDiffTotus)) continue;
+        //if ((abs_diff_timestamp >= args.absDiffTimestamp) || (rel_diff_tot_us >= args.relDiffTotus)) continue;
+        if ((abs_diff_timestamp >= args.absDiffTimestamp)) continue;
         // Row - Column pair reached here are mathced!
         if (rowUsed[iRow]) continue; // -> Reject if this row entry was used to match hits in different column
         rowUsed[iRow] = true; // Set flag to indicate this row was used to match hit

@@ -123,10 +123,10 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
   const int canvasWidth = nCols*padWidth;     // Modified: canvas width for five columns.
   const int canvasHeight = nRows*padHeight;   // Modified: canvas height for two rows.
 
-  TCanvas* c0 = new TCanvas("c0", "c0", canvasWidth, canvasHeight);
-  TCanvas* c1 = new TCanvas("c1", "c1", canvasWidth, canvasHeight);
-  TCanvas* c2 = new TCanvas("c2", "c2", 2*1.2*500, 500);
-  TCanvas* c3 = new TCanvas("c3", "c3", 1.2*1000, 1000);
+  TCanvas* c0  = new TCanvas("c0", "c0", canvasWidth, canvasHeight);
+  TCanvas* c1  = new TCanvas("c1", "c1", canvasWidth, canvasHeight);
+  TCanvas* c2  = new TCanvas("c2", "c2", 2*1.2*500, 500);
+  TCanvas* c3  = new TCanvas("c3", "c3", 1.2*1000, 1000);
 
   // Draw Hitmap & ToT distribution of each chip
   // Modified: create pads according to the total number of cells in the 2x5 grid.
@@ -270,7 +270,7 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
   p2 -> SetBottomMargin(0.1);
   p2 -> SetLeftMargin(0.1);
   p2 -> SetRightMargin(0.05);
-  p2 -> SetLogy();
+  //p2 -> SetLogy();
   p2 -> SetGrid();
   p2 -> Draw();
 
@@ -282,7 +282,8 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
   p3 -> Draw();
 
   p2 -> cd();
-  TH1D* htmp2 = (TH1D*)gPad -> DrawFrame(0.0, 1e-1, 9.0, entriesPerChip-> GetMaximum()*1e3);
+  //TH1D* htmp2 = (TH1D*)gPad -> DrawFrame(0.0, 1e-1, 9.0, entriesPerChip-> GetMaximum()*1e3);
+  TH1D* htmp2 = (TH1D*)gPad -> DrawFrame(0.0, 0.0, 9.0, entriesPerChip-> GetMaximum()*1.5);
   htmp2 -> GetXaxis() -> SetTitleFont(43);
   htmp2 -> GetXaxis() -> SetTitleSize(10);
   htmp2 -> GetXaxis() -> SetLabelFont(43);
