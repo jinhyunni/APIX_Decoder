@@ -366,7 +366,7 @@ void Draw_RunQA(std::string inputData, double dataTakenTime = 0, bool savePlots 
     p4 -> Draw();
 
     p4 -> cd();
-    TH1D* htmp = (TH1D*)gPad -> DrawFrame(0.0, 1e-1, 9.0, entriesPerChipPerSec -> GetMaximum()*1.5e2);
+    TH1D* htmp = (TH1D*)gPad -> DrawFrame(0.0, 1e-3, 9.0, entriesPerChipPerSec -> GetMaximum()*1.5e2);
     htmp -> GetXaxis() -> SetLabelFont(43);
     htmp -> GetXaxis() -> SetLabelSize(20);
     htmp -> GetXaxis() -> SetTitleFont(43);
