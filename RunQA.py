@@ -42,7 +42,6 @@ else:
     run_qa_command = f'Draw_RunQA.cpp("{local_root_file}")'
 
 # 1. Download
-'''
 subprocess.run(
     ["scp", remote_file, str(local_bin_file)],
     check=True,
@@ -56,7 +55,6 @@ subprocess.run(
     ],
     check=True,
 )
-'''
 # 3. Run QA
 subprocess.run(
     [
