@@ -1,3 +1,6 @@
+import os
+import sys
+import shutil
 from pathlib import Path
 import subprocess
 import argparse
@@ -13,13 +16,29 @@ parser.add_argument(
     "--data-taken-time",
     type=int,
     default=None,
-    help="Data-taking time. 예: 300",
+    help="Data-taking time. ex)300",
+)
+
+parser.add_argument(
+  "--only-draw-plots",
+  type=bool,
+  default=False,
+  help="Turn on this option to skip downloading .bin from server",
+)
+
+parser.add_argument(
+  "--only-store",
+  type=bool,
+  default=False,
+  help="Turn on this option to skip showing canvas of QA plots"
 )
 
 args = parser.parse_args()
 
 filename = args.filename
 data_taken_time = args.data_taken_time
+only_draw = args.only_draw_plots
+only_store = args.only_store
 
 server = "npl17inch"
 remote_dir = "/home/npl/AstroPix_9chip_2026TB_CERN/TB"
@@ -41,25 +60,25 @@ if data_taken_time is not None:
 else:
     run_qa_command = f'Draw_RunQA.cpp("{local_root_file}")'
 
-# 1. Download
-subprocess.run(
+# 1. Download .bin from server if requested
+if not only_draw: 
+  subprocess.run(
     ["scp", remote_file, str(local_bin_file)],
     check=True,
-)
+  )
 
 # 2. Decode: .bin → .root
 subprocess.run(
     [
-        "root", "-l", "-b", "-q",
-        f'APIXDecoder_TBCern.cpp("{local_bin_file}")',
+      "root", "-l", "-b", "-q",
+      f'APIXDecoder_TBCern.cpp("{local_bin_file}")',
     ],
     check=True,
 )
 # 3. Run QA
-subprocess.run(
-    [
-        "root", "-l",
-        run_qa_command,
-    ],
-    check=True,
-)
+root_command = ["root", "-l"]
+if only_store:
+  root_command.extend(["-b", "-q"])
+root_command.append(run_qa_command)
+
+subprocess.run(root_command, check=True)
